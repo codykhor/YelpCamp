@@ -12,7 +12,7 @@ const User = require('./models/user');
 
 const campgroundsRouter = require('./routes/campgrounds');
 const reviewsRouter = require('./routes/reviews');
-const usersRouter = require('./routes/users')
+const usersRouter = require('./routes/users');
 
 mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp');
 const db = mongoose.connection;
@@ -48,10 +48,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 
-passport.serializeUser(User.serializeUser())
-passport.deserializeUser(User.deserializeUser())
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
   next();
@@ -59,7 +60,7 @@ app.use((req, res, next) => {
 
 app.use('/campgrounds', campgroundsRouter);
 app.use('/campgrounds/:id/reviews', reviewsRouter);
-app.use('/', usersRouter)
+app.use('/', usersRouter);
 
 app.get('/', (req, res) => {
   res.render('home');
